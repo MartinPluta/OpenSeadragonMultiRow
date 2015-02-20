@@ -105,7 +105,7 @@ http://www.martinpluta.eu
             this.createVerticalButtons();
             this.addButtons(true);
             
-        }, addButtons(useGroup) {
+        }, addButtons: function(useGroup) {
             if (useGroup) {
                 this.paging = new $.ButtonGroup({
                     buttons: [
@@ -132,7 +132,7 @@ http://www.martinpluta.eu
                     );
                 }
             }
-        }, createVerticalButtons() {
+        }, createVerticalButtons: function() {
             var onPreviousRowHandler    = $.delegate( this, onPreviousRow ),
                 onNextRowHandler        = $.delegate( this, onNextRow ),
                 navImages               = this.navImages;
@@ -164,7 +164,7 @@ http://www.martinpluta.eu
                 onFocus:    this.viewer.onFocusHandler,
                 onBlur:     this.viewer.onBlurHandler
             });
-        }, overrideHorizontalButtons() {
+        }, overrideHorizontalButtons: function() {
             this.viewer.removeControl(this.viewer.pagingControl);
             this.previousButton = new $.Button({
                 element:    this.previousButton ? $.getElement( this.previousButton ) : null,
