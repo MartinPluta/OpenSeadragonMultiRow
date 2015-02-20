@@ -49,7 +49,8 @@ http://www.martinpluta.eu
         this.bindMultiRowControls();
         var self = this;
         this.viewer.addHandler("open", function() {
-            self.updateMultiRowButtons(self.viewer._sequenceIndex);
+            var sequenceIndex = getSequenceIndex(self.viewer);
+            self.updateMultiRowButtons(sequenceIndex);
         });
     };
 
@@ -98,15 +99,44 @@ http://www.martinpluta.eu
                 this.navImages = options.navImages;
             }
         }, bindMultiRowControls: function() {
-            var onPreviousRowHandler    = $.delegate( this, onPreviousRow ),
-                onNextRowHandler        = $.delegate( this, onNextRow ),
-                navImages               = this.navImages,
-                useGroup                = true;
-
             if (!this.preventOverride) {
                 this.overrideHorizontalButtons();
             }
+            this.createVerticalButtons();
+            this.addButtons(true);
             
+        }, addButtons(useGroup) {
+            if (useGroup) {
+                this.paging = new $.ButtonGroup({
+                    buttons: [
+                        this.previousButton,
+                        this.nextButton,
+                        this.previousRowButton,
+                        this.nextRowButton
+                    ],
+                    clickTimeThreshold: this.viewer.clickTimeThreshold,
+                    clickDistThreshold: this.viewer.clickDistThreshold
+                });
+
+                this.pagingControl = this.paging.element;
+
+                if( this.viewer.toolbar ){
+                    this.viewer.toolbar.addControl(
+                        this.pagingControl,
+                        {anchor: $.ControlAnchor.BOTTOM_RIGHT}
+                    );
+                }else{
+                    this.viewer.addControl(
+                        this.pagingControl,
+                        {anchor: this.multiRowControlAnchor || OpenSeadragon.ControlAnchor.TOP_LEFT}
+                    );
+                }
+            }
+        }, createVerticalButtons() {
+            var onPreviousRowHandler    = $.delegate( this, onPreviousRow ),
+                onNextRowHandler        = $.delegate( this, onNextRow ),
+                navImages               = this.navImages;
+
             this.previousRowButton = new $.Button({
                 element:    this.previousRowButton ? $.getElement( this.previousRowButton ) : null,
                 clickTimeThreshold: this.clickTimeThreshold,
@@ -134,41 +164,6 @@ http://www.martinpluta.eu
                 onFocus:    this.viewer.onFocusHandler,
                 onBlur:     this.viewer.onBlurHandler
             });
-            
-            if( !this.viewer.navPrevNextWrap ){
-                this.previousRowButton.disable();
-            }
-
-            if (!this.viewer.tileSources || !this.viewer.tileSources.length) {
-                this.nextRowButton.disable();
-            }
-
-            if (useGroup) {
-                this.paging = new $.ButtonGroup({
-                    buttons: [
-                        this.previousButton,
-                        this.nextButton,
-                        this.previousRowButton,
-                        this.nextRowButton
-                    ],
-                    clickTimeThreshold: this.viewer.clickTimeThreshold,
-                    clickDistThreshold: this.viewer.clickDistThreshold
-                });
-
-                this.pagingControl = this.paging.element;
-
-                if( this.viewer.toolbar ){
-                    this.viewer.toolbar.addControl(
-                        this.pagingControl,
-                        {anchor: $.ControlAnchor.BOTTOM_RIGHT}
-                    );
-                }else{
-                    this.viewer.addControl(
-                        this.pagingControl,
-                        {anchor: this.multiRowControlAnchor || OpenSeadragon.ControlAnchor.TOP_LEFT}
-                    );
-                }
-            }
         }, overrideHorizontalButtons() {
             this.viewer.removeControl(this.viewer.pagingControl);
             this.previousButton = new $.Button({
@@ -240,17 +235,18 @@ http://www.martinpluta.eu
     };
 
     function onPrevious() {
-        var previous = this.viewer._sequenceIndex - 1;
+        var sequenceIndex = getSequenceIndex(this.viewer);
+        var previous = sequenceIndex - 1;
         if(previous < 0) {
             previous += this.viewer.multiRowInstance.imagesPerRow;
         }
         this.viewer.goToPage( previous );
     }
 
-
     function onNext() {
+        var sequenceIndex = getSequenceIndex(this.viewer);
         var imagesPerRow = this.viewer.multiRowInstance.imagesPerRow;
-        var next = this.viewer._sequenceIndex + 1;
+        var next = sequenceIndex + 1;
         if(next % imagesPerRow == 0){
             next -= imagesPerRow;
         }
@@ -258,9 +254,10 @@ http://www.martinpluta.eu
     }
 
     function onPreviousRow() {
-        var previous = this.viewer._sequenceIndex - this.imagesPerRow;
+        var sequenceIndex = getSequenceIndex(this.viewer);
+        var previous = sequenceIndex - this.imagesPerRow;
         if (this.invertVertical) {
-            previous = this.viewer._sequenceIndex + this.imagesPerRow;
+            previous = sequenceIndex + this.imagesPerRow;
         }
         if(this.viewer.navPrevNextWrap && previous < 0){
             previous += this.viewer.tileSources.length;
@@ -269,9 +266,10 @@ http://www.martinpluta.eu
     }
 
     function onNextRow(){
-        var next = this.viewer._sequenceIndex + this.imagesPerRow;
+        var sequenceIndex = getSequenceIndex(this.viewer);
+        var next = sequenceIndex + this.imagesPerRow;
         if (this.invertVertical) {
-            next = this.viewer._sequenceIndex - this.imagesPerRow;
+            next = sequenceIndex - this.imagesPerRow;
         }
         if(this.viewer.navPrevNextWrap && next >= this.viewer.tileSources.length){
             next = 0;
@@ -295,6 +293,14 @@ http://www.martinpluta.eu
         }
     }
 
+    function getSequenceIndex(viewer) {
+        if (viewer.sequenceIndex) {
+            return viewer._sequenceIndex;
+        } else  {
+            return viewer.currentPage();
+        }
+    }
+    
     function resolveUrl( prefix, url ) {
         return prefix ? prefix + url : url;
     }
