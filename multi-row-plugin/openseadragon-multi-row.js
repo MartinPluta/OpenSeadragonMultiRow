@@ -49,8 +49,8 @@ http://www.martinpluta.eu
         this.bindMultiRowControls();
         var self = this;
         this.viewer.addHandler("open", function() {
-            var sequenceIndex = getSequenceIndex(self.viewer);
-            self.updateMultiRowButtons(sequenceIndex);
+            var currentPage = this.viewer.currentPage();
+            self.updateMultiRowButtons(currentPage);
         });
     };
 
@@ -235,8 +235,7 @@ http://www.martinpluta.eu
     };
 
     function onPrevious() {
-        var sequenceIndex = getSequenceIndex(this.viewer);
-        var previous = sequenceIndex - 1;
+        var previous = this.viewer.currentPage() - 1;
         if(previous < 0) {
             previous += this.viewer.multiRowInstance.imagesPerRow;
         }
@@ -244,9 +243,8 @@ http://www.martinpluta.eu
     }
 
     function onNext() {
-        var sequenceIndex = getSequenceIndex(this.viewer);
         var imagesPerRow = this.viewer.multiRowInstance.imagesPerRow;
-        var next = sequenceIndex + 1;
+        var next = this.viewer.currentPage() + 1;
         if(next % imagesPerRow == 0){
             next -= imagesPerRow;
         }
@@ -254,10 +252,8 @@ http://www.martinpluta.eu
     }
 
     function onPreviousRow() {
-        var sequenceIndex = getSequenceIndex(this.viewer);
-        var previous = sequenceIndex - this.imagesPerRow;
         if (this.invertVertical) {
-            previous = sequenceIndex + this.imagesPerRow;
+            previous = this.viewer.currentPage() + this.imagesPerRow;
         }
         if(this.viewer.navPrevNextWrap && previous < 0){
             previous += this.viewer.tileSources.length;
@@ -266,10 +262,9 @@ http://www.martinpluta.eu
     }
 
     function onNextRow(){
-        var sequenceIndex = getSequenceIndex(this.viewer);
-        var next = sequenceIndex + this.imagesPerRow;
+        var next = this.viewer.currentPage() + this.imagesPerRow;
         if (this.invertVertical) {
-            next = sequenceIndex - this.imagesPerRow;
+            next = this.viewer.currentPage() - this.imagesPerRow;
         }
         if(this.viewer.navPrevNextWrap && next >= this.viewer.tileSources.length){
             next = 0;
@@ -293,14 +288,6 @@ http://www.martinpluta.eu
         }
     }
 
-    function getSequenceIndex(viewer) {
-        if (viewer.sequenceIndex) {
-            return viewer._sequenceIndex;
-        } else  {
-            return viewer.currentPage();
-        }
-    }
-    
     function resolveUrl( prefix, url ) {
         return prefix ? prefix + url : url;
     }
