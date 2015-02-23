@@ -21,6 +21,8 @@ http://www.martinpluta.eu
 ----------------------------------------------------------- */
 (function($) {
 
+    var self;
+    
     $.Direction = {
         PREVIOUS: 0,
         NEXT: 1,
@@ -47,9 +49,9 @@ http://www.martinpluta.eu
         this.setDefaultOptions();
         this.updateOptions(options);
         this.bindMultiRowControls();
-        var self = this;
+        self = this;
         this.viewer.addHandler("open", function() {
-            var currentPage = this.viewer.currentPage();
+            var currentPage = self.viewer.currentPage();
             self.updateMultiRowButtons(currentPage);
         });
     };
@@ -175,7 +177,7 @@ http://www.martinpluta.eu
                 srcGroup:   resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.previous.GROUP ),
                 srcHover:   resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.previous.HOVER ),
                 srcDown:    resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.previous.DOWN ),
-                onRelease:  createHorizontalHandler($.Direction.PREVIOUS, this.invertHorizontal),
+                onRelease:  createHorizontalHandler($.Direction.PREVIOUS, this.invertHorizontal, this),
                 onFocus:    this.viewer.onFocusHandler,
                 onBlur:     this.viewer.onBlurHandler
             });
@@ -188,7 +190,7 @@ http://www.martinpluta.eu
                 srcGroup:   resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.next.GROUP ),
                 srcHover:   resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.next.HOVER ),
                 srcDown:    resolveUrl( this.viewer.prefixUrl, this.viewer.navImages.next.DOWN ),
-                onRelease:  createHorizontalHandler($.Direction.NEXT, this.invertHorizontal),
+                onRelease:  createHorizontalHandler($.Direction.NEXT, this.invertHorizontal, this),
                 onFocus:    this.viewer.onFocusHandler,
                 onBlur:     this.viewer.onBlurHandler
             });
@@ -235,9 +237,10 @@ http://www.martinpluta.eu
     };
 
     function onPrevious() {
+        var imagesPerRow = this.viewer.multiRowInstance.imagesPerRow;
         var previous = this.viewer.currentPage() - 1;
-        if(previous < 0) {
-            previous += this.viewer.multiRowInstance.imagesPerRow;
+        if((previous != 0) && ((previous + 1) % imagesPerRow == 0 || previous < 0)) {
+            previous += imagesPerRow;
         }
         this.viewer.goToPage( previous );
     }
@@ -252,6 +255,7 @@ http://www.martinpluta.eu
     }
 
     function onPreviousRow() {
+        var previous = this.viewer.currentPage() - this.imagesPerRow;
         if (this.invertVertical) {
             previous = this.viewer.currentPage() + this.imagesPerRow;
         }
@@ -272,18 +276,18 @@ http://www.martinpluta.eu
         this.viewer.goToPage( next );
     }
 
-    function createHorizontalHandler(direction, invertHorizontal) {
+    function createHorizontalHandler(direction, invertHorizontal, receiver) {
         if (direction == $.Direction.PREVIOUS) {
             if (invertHorizontal) {
-                return $.delegate( this, onNext );
+                return $.delegate( receiver, onNext );
             } else {
-                return $.delegate( this, onPrevious );
+                return $.delegate( receiver, onPrevious );
             }
         } else if (direction == $.Direction.NEXT) {
             if (invertHorizontal) {
-                return $.delegate( this, onPrevious );
+                return $.delegate( receiver, onPrevious );
             } else {
-                return $.delegate( this, onNext );
+                return $.delegate( receiver, onNext );
             }
         }
     }
