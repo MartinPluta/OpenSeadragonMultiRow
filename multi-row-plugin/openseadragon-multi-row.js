@@ -1,12 +1,12 @@
 /* ------------------------------------------------------------
 
-███╗   ███╗██████╗     
+███╗   ███╗██████╗
 ████╗ ████║██╔══██╗    Developer: Martin Pluta
 ██╔████╔██║██████╔╝    Website: http://www.martinpluta.eu
 ██║╚██╔╝██║██╔═══╝     E-Mail: martin.pluta@martinpluta.eu
-██║ ╚═╝ ██║██║     
-╚═╝     ╚═╝╚═╝     
-                   
+██║ ╚═╝ ██║██║
+╚═╝     ╚═╝╚═╝
+
 This software is not subject to copyright protection and is
 in the public domain. This software is an experimental system.
 The original author assumes no responsibility whatsoever for
@@ -22,12 +22,12 @@ http://www.martinpluta.eu
 (function($) {
 
     var self;
-    
+
     $.Direction = {
         PREVIOUS: 0,
         NEXT: 1,
     };
-    
+
     if (!$.version || $.version.major < 1) {
         throw new Error("OpenSeadragonMultiRow requires OpenSeadragon version 1.0.0+");
     }
@@ -61,6 +61,8 @@ http://www.martinpluta.eu
             this.prefixUrl = "/multi-row/multi-row-images/";
             this.imagesPerRow = 0;
             this.invertVertical = false;
+            this.vertical = true;
+            this.horizontal = true;
             this.invertHorizontal = false;
             this.preventOverride = false;
             this.multiRowControlAnchor = OpenSeadragon.ControlAnchor.TOP_LEFT;
@@ -94,6 +96,12 @@ http://www.martinpluta.eu
             if (isDefined(options.invertHorizontal)) {
                 this.invertHorizontal = options.invertHorizontal;
             }
+            if (isDefined(options.vertical)) {
+                this.vertical = options.vertical;
+            }
+            if (isDefined(options.horizontal)) {
+                this.horizontal = options.horizontal;
+            }
             if (isDefined(options.preventOverride)) {
                 this.preventOverride = options.preventOverride;
             }
@@ -101,12 +109,15 @@ http://www.martinpluta.eu
                 this.navImages = options.navImages;
             }
         }, bindMultiRowControls: function() {
-            if (!this.preventOverride) {
+            if (this.horizontal == false || this.horizontal == "false") {
+                this.viewer.removeControl(this.viewer.pagingControl);
+            } else if (!this.preventOverride) {
                 this.overrideHorizontalButtons();
             }
-            this.createVerticalButtons();
+            if (this.vertical == true || this.vertical == "true") {
+                this.createVerticalButtons();
+            }
             this.addButtons(true);
-            
         }, addButtons: function(useGroup) {
             if (useGroup) {
                 this.paging = new $.ButtonGroup({
@@ -278,13 +289,13 @@ http://www.martinpluta.eu
 
     function createHorizontalHandler(direction, invertHorizontal, receiver) {
         if (direction == $.Direction.PREVIOUS) {
-            if (invertHorizontal) {
+            if (invertHorizontal == true || invertHorizontal == "true") {
                 return $.delegate( receiver, onNext );
             } else {
                 return $.delegate( receiver, onPrevious );
             }
         } else if (direction == $.Direction.NEXT) {
-            if (invertHorizontal) {
+            if (invertHorizontal == true || invertHorizontal == "true") {
                 return $.delegate( receiver, onPrevious );
             } else {
                 return $.delegate( receiver, onNext );
