@@ -17,25 +17,28 @@ It can be used like this:
 
 Following options are available:
 `````javascript
-    prefixUrl : "/multi-row/multi-row-images/",
-    imagesPerRow : 0,
-    invertVertical : false,
-    invertHorizontal : false,
-    preventOverride : false,
-    sequenceControlAnchor = OpenSeadragon.ControlAnchor.TOP_LEFT,
-    navImages = {
-        previousRow: {
-            REST:   "previous_row_rest.png",
-            GROUP:  "previous_row_grouphover.png",
-            HOVER:  "previous_row_hover.png",
-            DOWN:   "previous_row_pressed.png"
-        },
-        nextRow: {
-            REST:   "next_row_rest.png",
-            GROUP:  "next_row_grouphover.png",
-            HOVER:  "next_row_hover.png",
-            DOWN:   "next_row_pressed.png"
-        }
+            this.prefixUrl = "/multi-row/multi-row-images/";
+            this.imagesPerRow = 0;
+            this.invertVertical = false;
+            this.vertical = true;
+            this.horizontal = true;
+            this.invertHorizontal = false;
+            this.preventOverride = false;
+            this.multiRowControlAnchor = OpenSeadragon.ControlAnchor.TOP_LEFT;
+            this.navImages = {
+                previousRow: {
+                    REST:   "previous_row_rest.png",
+                    GROUP:  "previous_row_grouphover.png",
+                    HOVER:  "previous_row_hover.png",
+                    DOWN:   "previous_row_pressed.png"
+                },
+                nextRow: {
+                    REST:   "next_row_rest.png",
+                    GROUP:  "next_row_grouphover.png",
+                    HOVER:  "next_row_hover.png",
+                    DOWN:   "next_row_pressed.png"
+                }
+            };
 `````
 
 Disclaimer:
