@@ -105,6 +105,9 @@ http://www.martinpluta.eu
             if (isDefined(options.preventOverride)) {
                 this.preventOverride = options.preventOverride;
             }
+            if (isDefined(options.multiRowControlAnchor)) {
+              this.multiRowControlAnchor = options.multiRowControlAnchor;
+            }
             if (isDefined(options.navImages)) {
                 this.navImages = options.navImages;
             }
@@ -208,7 +211,7 @@ http://www.martinpluta.eu
         }, updateMultiRowButtons: function(page) {
             if ( this.nextRowButton ) {
                 if (!this.invertVertical) {
-                    if(!this.viewer.tileSources || this.viewer.tileSources.length - 1 - this.imagesPerRow === page) {
+                    if(!this.viewer.tileSources || page > this.viewer.tileSources.length - 1 - this.imagesPerRow ) {
                         if ( !this.navPrevNextWrap ) {
                             this.nextRowButton.disable();
                         }
