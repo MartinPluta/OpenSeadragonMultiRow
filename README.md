@@ -2,7 +2,7 @@ This OpenSeadragon ( http://openseadragon.github.io/ ) plugin adds row navigatio
 
 To use the plugin, simply copy the 'multi-row-plugin' folder into the folder containing the openseadragon js and image files. Include the 'multi-row-plugin/openseadragon-multi-row.js' file after including the 'openseadragon.min.js' file.
 
-A demo is available at: http://www.martinpluta.eu/applications/openseadragon/multi-row/
+A demo is available at: http://www.zoosphere.net/sequence/29
 
 It can be used like this:
 `````javascript
